@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>备忘录</title>
+	<link rel="stylesheet" href="css/iconfont.css">
+</head>
+<style>
+	*{
+		margin:0;
+		padding:0;
+		list-style:none;
+	}
+	body{
+		background: #ccc;
+	}
+	.top_box{
+		height:60px;
+		background:#333;
+		color:#eee;
+	}
+	.top{
+		width:600px;
+		height:100%;
+		line-height: 60px;
+		margin:0 auto;
+	}
+	.top span{
+		float:left;
+		font-size: 30px;
+	}
+	.top input{
+		float:right;
+		width:200px;
+		padding:3px 5px;
+		margin-top:20px;
+		border-radius: 3px;
+	}
+	.cont{
+		width:600px;
+		height:auto;
+		margin:0 auto;
+		margin-top: 20px;
+	}
+	.cont>div{
+		height:auto;
+		overflow: hidden;
+		margin-bottom: 20px;
+	}
+	.cont>div>h2{
+		float:left;
+	}
+	.cont>div>div{
+		width:20px;
+		height:20px;
+		float:right;
+		background: #eee;
+		border-radius:50%;
+		margin-top: 6px;
+		line-height: 20px;
+		text-align: center;
+	}
+	.cont>div>ul li{
+		width:100%;
+		height:30px;
+		line-height: 30px;
+		background: #eee;
+		float:left;
+		border-radius: 5px;
+		margin-top: 5px;
+	}
+	.cont>div>ul li i{
+		float:left;
+		width:5px;
+		height:100%;
+		background: #629A9C;
+		border-radius: 5px 0 0 5px;
+	}
+	.cont>div>ul li input{
+		float:left;
+		margin-top: 8px;
+		margin-left: 5px;
+	}
+	.cont>div>ul li span{
+		float:left;
+		margin-left:10px;
+	}
+	.cont>div>ul li .del{
+		float:right;
+		width:20px;
+		height:20px;
+		padding:5px;
+		border-radius: 50%;
+	}
+	.cont>div>ul li .del div{
+		height:20px;
+		/*background: #ccc;*/
+		border-collapse: content-box;
+		border-clip:content-box;
+		border-radius: 50%;
+		line-height: 15px;
+		text-align: center;
+		color:#333;
+	}
+	.cont .pass>ul li{
+		opacity: 0.6;
+	}
+</style>
+<body>
+	<div class="top_box">
+		<div class="top">
+			<span>TODOLIST</span>
+			<input type="text" placeholder="add  todolist">
+		</div>
+	</div>
+	<div class="cont">
+		<div class="now">
+			<h2>正在进行</h2>
+			<div>0</div>
+			<ul id="now-list">
+				
+			</ul>
+		</div>
+		<div class="pass">
+			<h2>已经完成</h2>
+			<div>0</div>
+			<ul id="com-list">
+				
+			</ul>
+		</div>
+	</div>
+	<script>
+	var input=document.querySelector(".top>input");
+	var nowBox=document.querySelector("#now-list");
+	var comBox=document.querySelector("#com-list");
+	var nowCon=document.querySelector(".now .aa");
+	var comCon=document.querySelector(".pass .aa");
+	var nowNum=document.querySelector(".now>div");
+	var comNum=document.querySelector(".pass>div");
+	input.onkeydown=function(e){
+		var ev=e||window.event;
+		if(ev.keyCode==13){
+			if(this.value.length==0){
+				alert("请输入备忘!")
+				return;
+			}
+			var val=this.value;
+			var data=getData();
+			data.push({title:val,status:false});
+			this.value="";
+			saveData(data);
+			reload();
+		}
+	}
+	reload();
+	function getData(){
+		var data=JSON.parse(localStorage.getItem("cont"));
+		return data||[];
+	}
+	function saveData(data){
+		localStorage.setItem("cont",JSON.stringify(data));
+	}
+	function change(i,sta){
+		var data=getData();
+		data[i].status=sta;
+		saveData(data);
+		reload();
+	}
+	function del(i){
+		var data=getData();
+		data.splice(i,1);
+		saveData(data);
+		reload();
+	}
+	function reload(){
+		var data=getData();
+		var a=0;
+		var b=0;
+		nowBox.innerHTML="";
+		comBox.innerHTML="";
+		nowNum.innerHTML=0;
+		comNum.innerHTML=0;
+		for(var i=0;i<data.length;i++){
+			if(!data[i].status){
+				nowBox.innerHTML+='<li><i></i><input type="checkbox" onclick=change('+i+',true)><span class="aa">'+data[i].title+'</span><div class="del" onclick=del('+i+')><div class="iconfont">&#xe619;</div></div></li>';
+				nowNum.innerHTML=++a;
+			}else{
+				comBox.innerHTML+='<li><i></i><input type="checkbox" checked onclick=change('+i+',false)><span class="aa">'+data[i].title+'</span><div class="del" onclick=del('+i+')><div class="iconfont">&#xe619;</div></div></li>';
+				comNum.innerHTML=++b;
+			}
+		}
+	}
+	</script>
+</body>
+</html>
